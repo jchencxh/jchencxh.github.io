@@ -208,6 +208,10 @@ We’ve also learnt through SSL that explicitly supervising higher levels of abs
 
 I think we’ll see these two lines of thought eventually converge.
 
+## Acknowledgements
+
+Thanks to [Cem](https://cemadatepe.com/) and James W. for reading this draft over, and to [Omar](https://omarkhattab.com/) for his encouragement. 
+
 ## References
 
 [^1]: A. Kumar, J. Clune, J. Lehman, et al., "Questioning Representational Optimism in Deep Learning: The Fractured Entangled Representation Hypothesis," arXiv:2505.11581, 2025. [arXiv:2505.11581](https://arxiv.org/abs/2505.11581)
