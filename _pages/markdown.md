@@ -57,9 +57,9 @@ $$
 }
 $$
 
-The default delimiters of `$$...$$` and `\\[...\\]` are supported for displayed mathematics, while `\\(...\\)` should be used for in-line mathematics (ex., \\(a^2 + b^2 = c^2\\))
+The default delimiters of `$$...$$` and `\\[...\\]` are supported for displayed mathematics. For inline mathematics, use a raw HTML wrapper with entity-encoded backslashes so Markdown does not reinterpret the TeX, e.g. `<span>&#92;(a^2 + b^2 = c^2&#92;)</span>`.
 
-**Note** that since Academic Pages uses Markdown which cases some interference with MathJax and LaTeX for escaping characters and new lines, although [some workarounds exist](https://math.codidact.com/posts/278763/278772#answer-278772). In some cases, such as when you are including MathJax in a `citation` field for publications, it may be necessary to use `\(...\)` for inline delineation.
+**Note** that Academic Pages' Markdown processing can interfere with inline TeX in two ways: plain `\(...\)` may be stripped before MathJax runs, and plain `$...$` can still be parsed as Markdown when the expression contains `_`, `{}`, and similar syntax. Wrapping the inline expression in raw HTML and writing each backslash as `&#92;` avoids both issues.
 
 ## Mermaid diagrams
 Academic Pages includes support for [Mermaid diagrams](https://mermaid.js.org/) (version 11.* via [jsDelivr](https://www.jsdelivr.com/)) and in addition to their [tutorials](https://mermaid.js.org/ecosystem/tutorials.html) and [GitHub documentation](https://github.com/mermaid-js/mermaid) the basic syntax is as follows:
@@ -453,4 +453,3 @@ This allows you to denote <var>variables</var>.
 **Footnotes**
 
 The footnotes in the page will be returned following this line, return to the section on <a href="#footnotes">Markdown Footnotes</a>.
-
