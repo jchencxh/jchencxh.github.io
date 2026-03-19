@@ -117,7 +117,7 @@ As for why I think the state of mainstream SSL has converged to this type of dis
 ## The Actual cI-JEPA Algorithm
 
 ![cI-JEPA algorithm diagram](/images/posts/constructive-self-supervised-learning-part-1/ci-jepa-diagram.jpg)
-*Diagram based off of Figure 3 from I-JEPA paper[^1].*
+*cI-JEPA algorithm visual, based off of Figure 3 from I-JEPA paper[^1].*
 
 I train a standard ViT-B/16. 
 
@@ -431,7 +431,7 @@ An original desire for this project was to find a way to represent an abstractio
 
 ## Acknowledgements
 
-Dominik Schmidtand Minqi, and their LAPO paper[^5], was one of the initial inspirations for this project. When I was just starting out, Dominik said something to me like “just capture everything”. It was pretty nebulous to me what this meant at the time, but my current interpretation is something along the lines of “capture all the abstractions”.
+Dominik Schmidt and Minqi, and their LAPO paper[^5], was one of the initial inspirations for this project. When I was just starting out, Dominik said something to me like “just capture everything”. It was pretty nebulous to me what this meant at the time, but my current interpretation is something along the lines of “capture all the abstractions”.
 
 Akarsh and Kenneth, their work on UFR/FER representations[^6] and evolutionary methods, as well as discussions we’ve had, helped shape and encourage some of these ideas.
 
