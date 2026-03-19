@@ -75,7 +75,7 @@ Further for practical bootstrapping purposes, note that predicting all the repre
 
 ## Why predicting a hierarchy is generally a good objective
 
-In the last section, I considered why predicting a hierachy gives the controls for biasing retaining/dispersing/composing in deep objectives. Now, I will consider why predicting a hierarchy to learn representations as generally a good idea. 
+Now, I will consider how predicting a hierarchy to learn representations improves upon current latent SSL methods. 
 
 ### What traditional SSL is doing
 
