@@ -425,7 +425,7 @@ I thought about calling my cI-JEPA design I-JEPA 1.1 because I think it’s a mu
 
 I would also not limit your imagination to vision or JEPAs. The idea behind doing representation learning more constructively is broadly applicable to everything. It is much more a way of thinking about how to learn good abstractions of reality than it is a specific vision (or even JEPA) thing.
 
-I did not call this a JEPA because it implies that you have to be predicting something, which may not always be the case. At least, you just want signals from the entire abstraction hierarchy that arises from nature, and explicitly shape the entire abstraction hierarchy. Though, it could turn out that all good constructive SSL objectives are JEPAs (i.e., you predict) anyways.
+I did not refer to constructive methods as a JEPA because it implies that you have to be predicting something, which may not always be the case. At least, you just want signals from the entire abstraction hierarchy that arises from nature, and explicitly shape the entire abstraction hierarchy. Though, it could turn out that all good constructive SSL objectives are JEPAs (i.e., you predict) anyways.
 
 An original desire for this project was to find a way to represent an abstraction with the most efficient circuitry (least expressive power) possible. This and other ideas will hopefully be in part 2, where I talk a bit more about the interesting things you can do with a constructive objective.
 
