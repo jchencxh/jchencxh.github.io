@@ -431,7 +431,7 @@ An original desire for this project was to find a way to represent an abstractio
 
 ## Acknowledgements
 
-Dominik Schmidt and Minqi, and their LAPO paper[^5], was one of the initial inspirations for this project. When I was just starting out, Dominik said something to me like “just capture everything”. It was pretty nebulous to me what this meant at the time, but my current interpretation is something along the lines of “capture all the abstractions”.
+Dominik and Minqi, and their LAPO paper[^5], was one of the initial inspirations for this project. When I was just starting out, Dominik said something to me like “just capture everything”. It was pretty nebulous to me what this meant at the time, but my current interpretation is something along the lines of “capture all the abstractions”.
 
 Akarsh and Kenneth, their work on UFR/FER representations[^6] and evolutionary methods, as well as discussions we’ve had, helped shape and encourage some of these ideas.
 
