@@ -68,7 +68,7 @@ Having a prediction target that sits at a higher level, like there is in traditi
 
 Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does. **Having a learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions.**
 
-Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net. All of this will hopefully be further addressed in part 2 of the blog (TBD). 
+Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net. 
 
 Further for practical bootstrapping purposes, note that predicting all the representations where all levels of abstraction (we are supervising) are going to be learnt also provides conveniences for bootstrapping. For a given abstraction that we learn, the signal for learning it (i.e., the parts of the target hierarchy it’s supposed to be predicting) first forms dispersed throughout the network. We don’t know where exactly the ideal targets sit, and so we just predict everything. You will see concretely how this works in cI-JEPA. 
 
@@ -321,9 +321,7 @@ One training step can be written as:
 
 I evaluate learned representations with a linear-probing protocol closely matching the one used in I-JEPA, but adapted to ImageNet-100 and optimized with AdamW rather than LARS. After pretraining, I freeze the encoder and train a single linear classifier on top of the final-layer representation. Since the encoder has no CLS token, I extract the final patch tokens, average-pool them across spatial locations, and feed the pooled feature into a linear layer producing 100-way logits. When using EMA pretraining, I probe the EMA teacher encoder rather than the online student. I report top-1 accuracy on the ImageNet-100 validation set.
 
-The data transforms follow the standard I-JEPA-style linear-evaluation recipe. For probe training, I use `RandomResizedCrop(224, scale=(0.08, 1.0), interpolation=BICUBIC)`, random horizontal flip with probability `0.5`, conversion to tensor, and ImageNet normalization with mean `(0.485, 0.456, 0.406)` and standard deviation `(0.229, 0.224, 0.225)`. For validation, I use `Resize(256, interpolation=BICUBIC)`, `CenterCrop(224)`, conversion to tensor, and the same ImageNet normalization.
-
-Unlike the larger-budget linear probe used in the original I-JEPA work, I use a much smaller probe budget. The probe classifier is trained for only 10 epochs with batch size 256 using AdamW. 
+The data transforms follow the standard I-JEPA-style linear-evaluation recipe. However, unlike the larger-budget linear probe used in the original I-JEPA work, I use a much smaller probe budget. The probe classifier is trained for only 10 epochs with batch size 256 using AdamW. 
 
 ### Exact probe hyperparameters
 
@@ -388,7 +386,7 @@ Is this algorithm efficient? No. But I certainly hope it's illustrative.
 
 ## Current SSL is probably doing some learning over the entire hierarchy of abstractions
 
-I think it’s also important to first consider the possibility that current latent SSL methods are already somewhat learning over intermediate abstractions in the target, even if not explicitly doing deep supervision. 
+I think it’s also important to consider the possibility that current latent SSL methods are already somewhat learning over intermediate abstractions in the target, even if not explicitly doing deep supervision. 
 
 When people talk about “more pixel space information” vs “more semantic information” inside a representation, it’s useful to think of this as a weighted window on the spectrum of pixels to semantics, with higher absolute weighting on the spectrum meaning that the signals associated with that abstraction level are less dispersed/more easily recoverable from the representation (e.g., via a linear probe).
 
