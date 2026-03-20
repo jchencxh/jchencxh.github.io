@@ -79,21 +79,27 @@ So for a given hidden representation, the deep objective should do two things: c
 bias learning toward higher-level composition. If there was sufficient communication bandwidth between the levels of abstraction (there isn't in existing architectures), we may be able to retain easy access to all the building blocks, and the purpose of deep supervision becomes largely to bias towards non-spurious higher-level composition.
 
 
-### Predicting an abstraction hierarchy is a good deep objective, as well as a good objective generally. 
+### Predicting an abstraction hierarchy is a good (deep) objective. 
 
-I will now explain why when you learn representations via a prediction task, predicting a hierarchy of abstractions is such an objective that addresses our problem statement. 
+<!-- I will now explain why when you learn representations via a prediction task, predicting a hierarchy of abstractions is such an objective that addresses our problem statement. 
 
 Having a prediction target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards composing higher levels of abstraction. Conversely, when the prediction targets are lower level, we are biased towards learning lower levels of abstraction.
 
 **Predicting higher levels of abstraction biases towards composing higher levels of abstraction, predicting lower levels of abstraction biases towards retaining lower levels of abstraction. So predicting a hierarchy is useful as a deep objective.**
 
-Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does. 
+Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does.  -->
 
-A learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions.
+When representations are learned through prediction, the target level determines what the model is pushed to keep and compose. Higher-level targets bias learning toward composing higher-level abstractions, while lower-level targets bias learning toward retaining lower-level detail. Predicting a hierarchy, rather than a single level, therefore gives us a way to control this tradeoff across hidden representations.
 
-Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net. 
+A hierarchy target also makes shortcut solutions less attractive. If the loss only has to match one very high-level, low-bit target, spurious solutions can satisfy it more easily. Requiring a representation to explain multiple levels of abstraction imposes more semantic constraints, so the model is pushed toward compositions that remain useful across the hierarchy rather than for a single target alone.
 
-Further for practical bootstrapping purposes, note that predicting all the representations where all levels of abstraction (we are supervising) are going to be learnt also provides conveniences for bootstrapping. For a given abstraction that we learn, the signal for learning it (i.e., the parts of the target hierarchy it’s supposed to be predicting) first forms dispersed throughout the network. We don’t know where exactly the ideal targets sit, and so we just predict everything. You will see concretely how this works in cI-JEPA. 
+<!-- A learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions. -->
+
+<!-- Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net.  -->
+
+This is still imperfect. Predicting lower-level targets is only an indirect way to preserve lower-level structure, and standard residual architectures are not efficient for routing across different levels of abstraction. 
+
+Predicting all the representations where all levels of abstraction are going to be learnt also provides conveniences for bootstrapping. For a given abstraction that we learn, the signal for learning it (i.e., the parts of the target hierarchy it’s supposed to be predicting) first forms dispersed throughout the network. We don’t know where exactly the ideal targets sit, and so we just predict everything. You will see concretely how this works in cI-JEPA. 
 
 
 ## Why predicting a hierarchy is generally a good objective
