@@ -85,7 +85,7 @@ The core change from I-JEPA to cI-JEPA is actually very small: instead of using 
 
 Everything not mentioned here follows I-JEPA. In particular, I keep the same context/target-block masking scheme, the same target-location-conditioned predictor setup, and the same EMA teacher--student asymmetry. This section only describes the representation-level cI-JEPA objective -->
 
-I train a standard ViT-B/16. Relative to I-JEPA, the only substantive change is the objective: at each step, a small set of student depths predicts all collected teacher depths. Masking, target-location-conditioned prediction, and the EMA teacher follow I-JEPA.
+I train a standard ViT-B/16. Relative to I-JEPA, the only substantive change is the objective: at each step, a small set of student depths predicts all collected teacher depths. Masking, target-location-conditioned prediction, and the EMA teacher essentially follow I-JEPA (though there are a few small implementation differences in masking). 
 
 In the scaled-down setting used here, I train on ImageNet-100 (about a tenth of ImageNet-1000 size) for 200 epochs by default, and always use a LR warmup covering roughly <span>&#92;(2.5&#92;%&#92;)</span> of total training steps. cI-JEPA setup also removes the final encoder LayerNorm (done for consistency because there are no deep LayerNorms), uses constant weight decay <span>&#92;(0.05 &#92;)</span>, as well as use RoPE instead of sincos positional embeddings (as more recent JEPAs use RoPE). The goal is to keep the optimization and masking recipe as close as possible to I-JEPA while changing only the supervision objective to minimize confounds. 
 
