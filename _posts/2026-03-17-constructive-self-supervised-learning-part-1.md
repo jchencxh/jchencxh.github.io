@@ -13,7 +13,7 @@ categories:
 
 ## Introduction
 
-Traditionally, learning representations by predicting lower level abstractions is viewed as being harmful for learning good higher level semantics. Further, mainstream deep learning broadly does not explicitly supervise how and where lower level abstractions are formed.
+<!-- Traditionally, learning representations by predicting lower level abstractions is viewed as being harmful for learning good higher level semantics. Further, mainstream deep learning broadly does not explicitly supervise how and where lower level abstractions are formed.
 
 Broadly, I'm going to present the alternative position of: 
 1. We should explicitly shape how the entire abstraction hierarchy is constructed, and all levels of abstraction. 
@@ -30,7 +30,13 @@ For the current paradigm of SSL with feed forward neural nets, I lay out and sho
 
 I first define a class of SSL objectives which uses these two ideas called **constructive** SSL, so called because we supervise semantic construction. I then present a prototype **constructive** SSL objective that uses these two ideas. I design a deeply supervised variant of I-JEPA[^1], which I will refer to as cI-JEPA. 
 
-In cI-JEPA, I explicitly bootstrap intermediate levels of abstraction and learn the final representation via a hierarchy prediction task. I then show that changing how we weigh this prediction task effects how well we can learn useful intermediate abstractions to lead to a more semantic final representation, and that shaping the final representation by predicting a target hierarchy further boosts semantic performance.
+In cI-JEPA, I explicitly bootstrap intermediate levels of abstraction and learn the final representation via a hierarchy prediction task. I then show that changing how we weigh this prediction task effects how well we can learn useful intermediate abstractions to lead to a more semantic final representation, and that shaping the final representation by predicting a target hierarchy further boosts semantic performance. -->
+
+Traditionally, predicting lower-level abstractions is treated as harmful to learning higher-level semantics, and mainstream deep learning rarely supervises how intermediate abstractions are formed. This post argues for the opposite approach: we should explicitly shape the abstraction hierarchy during learning, and we should learn representations using signal from multiple levels of that hierarchy.
+
+I call this family of objectives **constructive** SSL, because it explicitly supervises semantic construction. As a concrete example, I introduce cI-JEPA, a deeply supervised variant of I-JEPA[^1] in which a small set of student depths predicts a hierarchy of teacher representations rather than a single final target. By changing how this hierarchy is weighted, we can control the tradeoff between retaining lower-level structure and composing toward higher-level abstractions.
+
+On ImageNet-100 at ViT-B scale, this improves linear-probe accuracy over the I-JEPA baseline. More broadly, I will argue two things: first, predicting an abstraction hierarchy is a useful way to design deep self-supervision for intermediate representations; second, using that same hierarchy to shape the final representation improves the final representation as well.
 
 I perform my experiments on ImageNet-100 and ViT-B scale, and evaluate via improvement in linear probing accuracy on ImageNet-100.
 
