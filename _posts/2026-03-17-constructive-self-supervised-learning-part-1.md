@@ -353,7 +353,7 @@ Unlike the larger-budget linear probe used in the original I-JEPA work, I use a 
 | `R-A05-B05` | cI-JEPA, high all bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | 0.5 | 0.5 | 68.96 % |
 | `R-A08-B08` | cI-JEPA, higher all bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | 0.8 | 0.8 | 66.94 % |
 | `R-A05-B08` | cI-JEPA, high intermediate + higher final bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span>| 200 | 0.5 | 0.8 | **70.06 %** |
-| `R-A05-B08-12` | cI-JEPA, high intermediate + higher final bias <span>&#92;((&#92;mathcal D = &#92;{d_0, &#92;dots, d_{11}&#92;})&#92;)</span>| 200 | TBD | TBD | TBD |
+| `R-A05-B08-12` | cI-JEPA, high intermediate + higher final bias (depth 0 added) <span>&#92;((&#92;mathcal D = &#92;{d_0, &#92;dots, d_{11}&#92;})&#92;)</span>| 200 | 0.5 | 0.8 | 69.1% |
 | `R-B05` | cI-JEPA, high final bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | <span>&#92;(&#92;frac{1}{11}&#92;)</span> (uniform) | 0.5 | 68.42 % |
 | `R-B08` | cI-JEPA, higher final bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | <span>&#92;(&#92;frac{1}{11}&#92;)</span> (uniform) | 0.8 | 69.36 % |
 | `R-A05-B10` | cI-JEPA, high intermediate bias + final doesn't predict hierarchy <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | 0.5 | 1.0 | 69.22 % |
@@ -379,7 +379,7 @@ As a reminder:
 
 5. `R-A.-B05` and `R-A.-B08`: without deep supervision predicting the hierarchy with the final representation produces noisy targets. Conversely, deep supervision produces a good abstraction hierarchy that is effective for defining a prediction objective on. 
 
-6. As a sanity check, I also add the first block's output in `R-A05-B08-12`, results TBD (it's still running, this will be updated)
+6. As a sanity check, I also added the first block's output (<span>&#92;(d_0&#92;)</span>) for run `R-A05-B08-12`. There's a slight performance dip likely because predicting the first representation does not provide much learning signal. 
 
 Is this algorithm efficient? No. But I certainly hope it's illustrative. 
 
