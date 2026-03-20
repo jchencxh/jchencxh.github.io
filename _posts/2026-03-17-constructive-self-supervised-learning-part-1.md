@@ -13,25 +13,6 @@ categories:
 
 ## Introduction
 
-<!-- Traditionally, learning representations by predicting lower level abstractions is viewed as being harmful for learning good higher level semantics. Further, mainstream deep learning broadly does not explicitly supervise how and where lower level abstractions are formed.
-
-Broadly, I'm going to present the alternative position of: 
-1. We should explicitly shape how the entire abstraction hierarchy is constructed, and all levels of abstraction. 
-2. We should learn (all) representations using signal from many levels of the abstraction hierarchy.
-
-For the current paradigm of SSL with feed forward neural nets, I lay out and show that:
-1. General principles of designing deep supervision to better learn intermediate representations, effective deep supervision learns better representations. 
-
-      I define a problem statement for designing deep objectives, and present a general predictive self-supervised solution to deep supervision that learns representations by predicting a target hierarchy. I then show that we can control how we much disperse and compose intermediate abstractions by changing how we weigh a prediction task over a target hierarchy, and that by doing this weighing well we are able to learn better semantics in the final representation.
-    
-2. You can learn a better final representation using signal from intermediate representations. 
-
-      I show that predicting a target hierarchy is an effective objective for shaping the final representation, likely for the same reasons why predicting an abstraction hierarchy makes for an effective deep objective.
-
-I first define a class of SSL objectives which uses these two ideas called **constructive** SSL, so called because we supervise semantic construction. I then present a prototype **constructive** SSL objective that uses these two ideas. I design a deeply supervised variant of I-JEPA[^1], which I will refer to as cI-JEPA. 
-
-In cI-JEPA, I explicitly bootstrap intermediate levels of abstraction and learn the final representation via a hierarchy prediction task. I then show that changing how we weigh this prediction task effects how well we can learn useful intermediate abstractions to lead to a more semantic final representation, and that shaping the final representation by predicting a target hierarchy further boosts semantic performance. -->
-
 Traditionally, predicting lower-level abstractions is treated as harmful to learning higher-level semantics, and mainstream deep learning rarely supervises how intermediate abstractions are formed. This post argues for the opposite approach: we should explicitly shape the abstraction hierarchy during learning, and we should learn representations using signal from multiple levels of that hierarchy.
 
 I call this family of objectives **constructive** SSL, because it explicitly supervises semantic construction. As a concrete example, I introduce cI-JEPA, a deeply supervised variant of I-JEPA[^1] in which a small set of student depths predicts a hierarchy of teacher representations rather than a single final target. By changing how this hierarchy is weighted, we can control the tradeoff between retaining lower-level structure and composing toward higher-level abstractions.
@@ -45,18 +26,6 @@ The data and code can be found [here](https://drive.google.com/drive/u/0/folders
 ## Principles for learning lower level abstractions (with deep self-supervision).
 
 ### Setting a problem statement. 
-
-<!-- Let's assume that we want the supervise semantic construction, so we want to better shape intermediate abstractions during learning and learn better compositions to higher levels of abstraction. To do this, for modern deep learning, it will often mean designing deep objectives that optimize hidden representations. 
-
-There lacks a general problem statement and idea for how to do good deep supervision. I will try to address this now. 
-
-<div markdown="1" style="margin: 1.5rem 0; padding: 1rem 1.25rem; border: 1px solid var(--global-border-color); border-radius: 0; text-indent: 0;">
-**The problem statement for deep self-supervision:**
-
-When learning a representation, we wish to learn the set of abstractions that are most likely to be useful for our downstream tasks. While we build this representation (i.e., in the hidden representations), we can choose to do some combination of compose, retain and disperse its abstractions.
-
-If we do not disperse enough, we risk not having enough capacity to add new abstractions. If we do not retain enough, we risk losing too many potentially useful abstractions that can be used later on (either for composition, or in the final representation). If we do not compose, then we risk not abstracting enough for the final representation to be useful. Deep supervision should aim to balance this composing, retaining, and dispersing.
-</div> -->
 
 Let’s assume we want to supervise semantic construction: shape intermediate abstractions as they form, not just the final
 representation. In modern deep nets, that usually means designing deep objectives that act on hidden representations.
@@ -76,26 +45,14 @@ three.
 A standard supervised deep loss, such as attaching a classifier to an intermediate layer, is poorly matched to this goal. It rewards whatever features solve the task immediately, including shortcuts, rather than abstractions that remain useful for later composition. That makes it a weak objective for shaping intermediate representations, especially on noisy natural data.
 
 So for a given hidden representation, the deep objective should do two things: control the retention-dispersion tradeoff, and still
-bias learning toward higher-level composition. If there was sufficient communication bandwidth between the levels of abstraction (there isn't in existing architectures), we may be able to retain easy access to all the building blocks, and the purpose of deep supervision becomes largely to bias towards non-spurious higher-level composition.
+bias learning toward higher-level composition. If there was sufficient communication bandwidth between the levels of abstraction (there isn't in existing architectures), we wouldn't have to keep all our building blocks in a single set of latents, and the purpose of deep supervision becomes largely to bias towards non-spurious higher-level composition.
 
 
 ### Predicting an abstraction hierarchy is a good (deep) objective. 
 
-<!-- I will now explain why when you learn representations via a prediction task, predicting a hierarchy of abstractions is such an objective that addresses our problem statement. 
-
-Having a prediction target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards composing higher levels of abstraction. Conversely, when the prediction targets are lower level, we are biased towards learning lower levels of abstraction.
-
-**Predicting higher levels of abstraction biases towards composing higher levels of abstraction, predicting lower levels of abstraction biases towards retaining lower levels of abstraction. So predicting a hierarchy is useful as a deep objective.**
-
-Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does.  -->
-
 When representations are learned through prediction, the target level determines what the model is pushed to keep and compose. Higher-level targets bias learning toward composing higher-level abstractions, while lower-level targets bias learning toward retaining lower-level detail. Predicting a hierarchy, rather than a single level, therefore gives us a way to control this tradeoff across hidden representations.
 
 A hierarchy target also makes shortcut solutions less attractive. If the loss only has to match one very high-level, low-bit target, spurious solutions can satisfy it more easily. Requiring a representation to explain multiple levels of abstraction imposes more semantic constraints, so the model is pushed toward compositions that remain useful across the hierarchy rather than for a single target alone.
-
-<!-- A learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions. -->
-
-<!-- Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net.  -->
 
 This is still imperfect. Predicting lower-level targets is only an indirect way to preserve lower-level structure, and standard residual architectures are not efficient for routing across different levels of abstraction. 
 
@@ -104,43 +61,17 @@ Predicting all the representations where all levels of abstraction are going to 
 
 ## Why predicting a hierarchy is generally a good objective
 
-Now, I will consider how predicting a hierarchy to learn representations improves upon current latent SSL methods. 
-
 ### What traditional SSL is doing
 
-Representations are often more useful if they contain higher level abstractions which are easier to use for modeling more tasks we care about.
+Higher-level abstractions are usually more useful for downstream tasks than raw low-level detail. If the learning objective asks a model to predict very low-level targets such as pixels (see, MAE[^3]), the model has to discover those higher-level abstractions indirectly. That is hard because the gap between the target and the abstractions we care about is large, and the resulting learning signal is noisy and sensitive to nuisance variation.
 
-When we shape representations to be predictive of lower levels of abstraction (e.g., pixels), we still hope that the final representations learnt contain abstractions useful for predicting higher levels of abstraction (as in, we hope that those representations contain higher levels of abstraction), beyond the learning task of predicting lower levels of abstraction. This works poorly out-of-the-box (see, MAE[^3]).
+Latent SSL reduces this gap by predicting bootstrapped representations that are already biased toward higher-level structure rather than raw low-level targets. In effect, it lifts the level of abstraction at which supervision happens. Another way to describe this is that latent SSL works partly by dispersing lower-level detail. By not forcing the representation to preserve every low-level factor, it encourages the model to keep building blocks at a higher level of abstraction, which makes useful compositions easier to learn. The downside is that this mechanism is blunt with no controllability: it can also discard lower-level information that would still be useful for later composition or the final representation, and there are no knobs for us to use to tune how/what it discards. 
 
-At its core, learning is a process of learning how to compose abstractions. It is difficult to learn good higher level abstractions by predicting lower levels of abstraction. While higher level abstractions are helpful for predicting lower levels of abstraction, whatever biases provided by just predicting lower levels of abstraction is insufficient for learning compositions to higher level abstractions. This is in part because whatever signal that incentivizes the learning of higher level abstractions that does exist has to contend with the large amounts of estimator noise (e.g., predicting pixels is noisy), another way to think about this is that the learning signal isn’t invariant to nuisances for the same higher level concept.
 
-The larger the unsupervised gap between some building blocks and the higher level of abstraction we want to compose up to, the more difficult it is to learn a good composition up to that higher level of abstraction. This is true regardless if we’re supervising the higher level explicitly (e.g., image classification), or trying to learn it implicitly by supervising a lower level of abstraction (e.g., predicting pixels). Larger gaps invite more spuriousness and shortcuts, and are overall harder to learn well as there's just more to learn without supervision. This is most obvious when the final level of abstraction is very high and low-bit, say in a supervised classification setting where background cues can be exploited.
+### Why mainstream SSL converged on dispersion, and why that is limiting
 
-Intuitively, to address this issue of composing up to higher levels of abstraction, you want to both shrink the unsupervised gap(s) up you have to learn compositions for, as well as have more usable signals which reflect the nature of higher levels of abstraction (e.g., signals invariant to lower level nuisances) so actually are biased towards composing up.
 
-Modern latent SSL uses the idea that higher levels of abstraction are often more useful for predicting higher levels of abstraction, and so we can learn representations biased towards higher levels of abstraction by shaping them to be predictive of representations also biased towards higher levels of abstraction.
-
-The more traditional latent SSL solution involves simply not attempting to predict all the lower levels of abstraction, or trying to learn compositions of abstractions that are too low level. We don’t predict pixels, or try to meaningfully compose as many of the pixels as possible.
-
-Instead, we do something akin to constantly lifting the levels of abstraction of what we represent, and as modern SSL has a prediction target that is bootstrapped from the same model, we also lift the level of abstraction of our prediction target.
-
-From another view, we bias our model to disperse lower level abstractions like pixels and factors predictive of lower levels of abstraction. If we design this dispersal well, we will be biased towards retaining building blocks that sit at higher levels of abstraction that we can more easily learn compositions for. Composing these retained higher level building blocks biases the final representation towards higher level abstractions, which we then use to predict representations also biased towards higher levels of abstraction (as again, the prediction targets are bootstrapped from the same model in mainstream latent SSL). This creates a cycle where we ideally end up learning compositions (with whatever’s not dispersed) for, and representing, higher levels of abstraction.
-
-So returning to our smaller gaps and higher level signal intuition, status quo latent SSL shrinks the gaps by just dispersing lower levels of abstraction so our building blocks are higher level, and in doing so biases towards producing a better learning signal for higher level abstractions.
-
-### Why maintream SSL converged to problematically using dispersion
-
-As for why I think the state of mainstream SSL has converged to this type of dispersion-reliant method, and why it’s problematic:
-
-1. There isn't another good method for biasing towards higher level composition while still being able to control how many lower level abstractions we retain. This is unfortunate as lower levels of abstraction likely still contain useful semantic information that should be kept in the (final) representation(s), so we should retain some in both the representation we learn and our prediction objective. 
-    
-    For retaining lower level abstractions in the target, note that small differences in chalk lines on a black board contain crucial signals for learning a math proof from a video of a mathematician. Learning abstractions of the math proof from predicting contents of the video will require the objective to be sensitive to small changes in chalk lines. So, the need to predict low level abstractions like small chalk line variations should be retained.
-
-2. Relatedly, this is because there isn’t a general idea of how to directly supervise (e.g., there isn't a framework for how to do deep supervision) how lower level abstractions should be composed, so we just disperse the lower level abstractions that are too hard to learn compositions for.
-   
-   Some of the abstractions dispersed in traditional latent SSL may actually have valid compositions to the higher levels of abstractions, and dispersing these instead of learning to compose them is not ideal. Dispersion makes the composition to the higher level of abstraction less robust.
-
-**The constructive method of predicting a hierarchy to learn both final and hidden representations addresses both of the above.**
+Mainstream latent SSL converged on dispersion largely because it lacks a direct way to encourage higher-level composition while still preserving useful lower-level detail. Dispersion is an effective shortcut: it suppresses low-level factors that are hard to compose and makes higher-level signals easier to learn. But it is also blunt. Some of the lower-level structure it throws away would still be useful for later composition or for the final representation. Constructive SSL is meant to replace that blunt tradeoff with explicit control over what gets retained, composed, and dispersed.
 
 
 ## The Actual cI-JEPA Algorithm
