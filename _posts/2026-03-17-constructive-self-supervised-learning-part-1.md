@@ -46,7 +46,7 @@ The data and code can be found [here](https://drive.google.com/drive/u/0/folders
 
 ### Setting a problem statement. 
 
-Let's assume that we want the supervise semantic construction, so we want to better shape intermediate abstractions during learning and learn better compositions to higher levels of abstraction. To do this, for modern deep learning, it will often mean designing deep objectives that optimize hidden representations. 
+<!-- Let's assume that we want the supervise semantic construction, so we want to better shape intermediate abstractions during learning and learn better compositions to higher levels of abstraction. To do this, for modern deep learning, it will often mean designing deep objectives that optimize hidden representations. 
 
 There lacks a general problem statement and idea for how to do good deep supervision. I will try to address this now. 
 
@@ -56,13 +56,28 @@ There lacks a general problem statement and idea for how to do good deep supervi
 When learning a representation, we wish to learn the set of abstractions that are most likely to be useful for our downstream tasks. While we build this representation (i.e., in the hidden representations), we can choose to do some combination of compose, retain and disperse its abstractions.
 
 If we do not disperse enough, we risk not having enough capacity to add new abstractions. If we do not retain enough, we risk losing too many potentially useful abstractions that can be used later on (either for composition, or in the final representation). If we do not compose, then we risk not abstracting enough for the final representation to be useful. Deep supervision should aim to balance this composing, retaining, and dispersing.
+</div> -->
+
+Let’s assume we want to supervise semantic construction: shape intermediate abstractions as they form, not just the final
+representation. In modern deep nets, that usually means designing deep objectives that act on hidden representations.
+
+<div markdown="1" style="margin: 1.5rem 0; padding: 1rem 1.25rem; border: 1px solid var(--global-border-color); border-radius: 0;
+text-indent: 0;">
+**The problem statement for deep self-supervision:**
+
+When learning a representation, we want hidden states to support three things: retaining useful lower-level abstractions, composing
+them into higher-level ones, and dispersing what should no longer occupy capacity.
+
+Too much dispersion throws away building blocks that may be useful later. Too much retention leaves too little capacity for new
+abstractions. Too little composition leaves the final representation under-abstracted. A good deep objective should balance all
+three.
 </div>
 
-Let's first consider training an animal classifier, and defining a classifier on intermediate representations to use as our deep objective. The issue with this is that classifying animals is not a good objective for learning what we actually care about in the middle of the network: we want to learn abstractions that can be further composed for better classification in the middle of the network. Instead, such a supervised deep objective learns what is immediately useful for classifying the data, which are unlikely to be a good portion of the abstractions useful for further composition.
+A standard supervised deep loss, such as attaching a classifier to an intermediate layer, is poorly matched to this goal. It rewards whatever features solve the task immediately, including shortcuts, rather than abstractions that remain useful for later composition. That makes it a weak objective for shaping intermediate representations, especially on noisy natural data.
 
-With this supervised deep objective, you may learn to use a background shortcut that satisfies your classifier loss early on in the net, and this will prevent other abstractions from being learnt and retained, which will stop you from learning most of the abstractions that are useful for composing into higher level abstractions to give you a better classifier. It's really hard to design a supervised objective that actually learns useful intermediate abstractions, and this is especially so for noisy data. So, if we want to supervise lower level abstractions (i.e., do deep supervision) we will have to design a self-supervised task. 
+So for a given hidden representation, the deep objective should do two things: control the retention-dispersion tradeoff, and still
+bias learning toward higher-level composition.
 
-**So, for a given hidden representation, we want a deep objective that is able to control how much we retain and disperse, as well as bias towards composing higher levels of abstraction.**
 
 ### Predicting an abstraction hierarchy is a good deep objective, as well as a good objective generally. 
 
