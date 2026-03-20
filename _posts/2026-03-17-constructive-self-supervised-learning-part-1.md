@@ -326,24 +326,13 @@ As a reminder:
 3. Further, remember that in the actual code, `all_to_last_weight` and `last_to_last_weight` don't exactly correspond to <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span>. In the code, if `last_to_last_weight` isn't set, <span>&#92;(&#92;beta&#92;)</span> will default to <span>&#92;(&#92;alpha&#92;)</span>. 
 
 **The important observations:**
-<!-- 1. Run `R-A05-B10` which performs deep supervision, while the final representation is shaped by predicting **only** the target's final representation, still outperforms the vanilla baselines `L200` and `L300`. This shows that shaping intermediate representations by predicting a target abstraction hierarchy learns good intermediate abstractions, which leads to a better final representation. -->
 1. `R-A05-B10` beats both I-JEPA baselines, which suggests that hierarchy prediction is already useful as deep supervision even when the final representation predicts only the deepest target.
 
-<!-- 2. Run `R-A05-B08` which shapes the final representation by using it to predict lower level abstractions beats `R-A05-B10` which does deep supervision but does not use the final representation to predict lower level representations. This shows that shaping the final representation by predicting lower level abstractions can boost its semantic performance. -->
 2. `R-A05-B08` beats `R-A05-B10`, which suggests that asking the final representation to predict lower-level abstractions improves the final representation itself.
-
-<!-- 3. Comparing runs `R-U`, `R-A05-B05`, `R-A08-B08`, and `R-A05-B08`: There is a balance to be made by tuning <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span> to bias the representations to compose to higher level abstractions and retaining lower level abstractions that are more predictive of lower levels of the hierarchy. Dispersing too much (`R-A08-B08`) starts hurting. Not composing higher/dispersing too little (`R-U`) doesn't learn enough semantics. 
-
-    We don't want to disperse too much in the middle of the network so we can retain more factors potentially useful for further semantic composition, while we want to disperse more and compose more in the final block so that we can compose the more higher level abstractions (`R-A05-B08` is better than `R-A05-B05`).  -->
 
 3. Weighting matters. Uniform supervision (`R-U`) under-composes, while overly strong deepest-target bias (`R-A08-B08`) hurts performance. The best result (`R-A05-B08`) uses moderate deepest-target bias in intermediate layers and stronger bias in the final layer.
 
-<!-- 4. `R-B05` and `R-B08`: even without biasing the deep supervision towards a higher level, biasing the final representation towards higher levels improves semantics.  -->
-
 4. `R-B05` and `R-B08` show that final-layer bias alone helps, but `R-A.-B05` and `R-A.-B08` show that final-layer hierarchy prediction without deep supervision is weak. The hierarchy becomes most useful when intermediate representations are also shaped.
-
-<!-- 
-5. `R-A.-B05` and `R-A.-B08`: without deep supervision predicting the hierarchy with the final representation produces noisy targets. Conversely, deep supervision produces a good abstraction hierarchy that is effective for defining a prediction objective on.  -->
 
 6. As a sanity check, I also added the first block's output (<span>&#92;(d_0&#92;)</span>) for run `R-A05-B08-12`. There's a slight performance dip likely because predicting the first representation does not provide much learning signal. 
 
