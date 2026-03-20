@@ -22,11 +22,11 @@ Broadly, I'm going to present the alternative position of:
 For the current paradigm of SSL with feed forward neural nets, I lay out and show that:
 1. General principles of designing deep supervision to better learn intermediate representations, effective deep supervision learns better representations. 
 
-      **I define a problem statement for designing deep objectives, and present a general predictive self-supervised solution to deep supervision that learns representations by predicting a target hierarchy. I then show that we can control how we much disperse and compose intermediate abstractions by changing how we weigh a prediction task over a target hierarchy, and that by doing this weighing well we are able to learn better semantics in the final representation.**
+      I define a problem statement for designing deep objectives, and present a general predictive self-supervised solution to deep supervision that learns representations by predicting a target hierarchy. I then show that we can control how we much disperse and compose intermediate abstractions by changing how we weigh a prediction task over a target hierarchy, and that by doing this weighing well we are able to learn better semantics in the final representation.
     
 2. You can learn a better final representation using signal from intermediate representations. 
 
-      **I show that predicting a target hierarchy is an effective objective for shaping the final representation, likely for the same reasons why predicting an abstraction hierarchy makes for an effective deep objective.**
+      I show that predicting a target hierarchy is an effective objective for shaping the final representation, likely for the same reasons why predicting an abstraction hierarchy makes for an effective deep objective.
 
 I first define a class of SSL objectives which uses these two ideas called **constructive** SSL, so called because we supervise semantic construction. I then present a prototype **constructive** SSL objective that uses these two ideas. I design a deeply supervised variant of I-JEPA[^1], which I will refer to as cI-JEPA. 
 
@@ -66,7 +66,9 @@ Having a prediction target that sits at a higher level, like there is in traditi
 
 **Predicting higher levels of abstraction biases towards composing higher levels of abstraction, predicting lower levels of abstraction biases towards retaining lower levels of abstraction. So predicting a hierarchy is useful as a deep objective.**
 
-Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does. **Having a learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions.**
+Having the ability to control the levels of abstraction at each hidden representation is extremely useful. It'd be better if predicting a hierarchy had a bias against learning spurious compositions too, and indeed there's an intuitive reason as to why it does. 
+
+A learning target that sits at a higher level, like there is in traditional latent SSL, is good for biasing learning towards higher levels of abstraction. When a target level is too high and too low-bit, it becomes easier to learn a spurious shortcut solution. Conveniently, it is harder to exploit a spurious shortcut solution when the loss has to explain the entire hierarchy of abstractions, as you just have more semantic constraints. Predicting a hierarchy gives you non-spurious bias towards composing higher level abstractions.
 
 Note that this is still imperfect. More practically, the standard residual architecture means that we are constantly fighting between retaining and dispersing lower level abstractions as there's no easy pathway to talk between two very distant points in the network (this is easily addressed with a few architectural tweaks, though). Further, predicting lower level abstractions as a proxy for retaining lower level abstractions is also quite indirect, and we may still disperse very low level semantics that aren't obviously useful for prediction, but may be useful for composition very late into the feed forward net. 
 
@@ -87,7 +89,7 @@ At its core, learning is a process of learning how to compose abstractions. It i
 
 The larger the unsupervised gap between some building blocks and the higher level of abstraction we want to compose up to, the more difficult it is to learn a good composition up to that higher level of abstraction. This is true regardless if we’re supervising the higher level explicitly (e.g., image classification), or trying to learn it implicitly by supervising a lower level of abstraction (e.g., predicting pixels). Larger gaps invite more spuriousness and shortcuts, and are overall harder to learn well as there's just more to learn without supervision. This is most obvious when the final level of abstraction is very high and low-bit, say in a supervised classification setting where background cues can be exploited.
 
-**Intuitively, to address this issue of composing up to higher levels of abstraction, you want to both shrink the unsupervised gap(s) up you have to learn compositions for, as well as have more usable signals which reflect the nature of higher levels of abstraction (e.g., signals invariant to lower level nuisances) so actually are biased towards composing up.**
+Intuitively, to address this issue of composing up to higher levels of abstraction, you want to both shrink the unsupervised gap(s) up you have to learn compositions for, as well as have more usable signals which reflect the nature of higher levels of abstraction (e.g., signals invariant to lower level nuisances) so actually are biased towards composing up.
 
 Modern latent SSL uses the idea that higher levels of abstraction are often more useful for predicting higher levels of abstraction, and so we can learn representations biased towards higher levels of abstraction by shaping them to be predictive of representations also biased towards higher levels of abstraction.
 
@@ -390,7 +392,7 @@ I think it’s also important to consider the possibility that current latent SS
 
 When people talk about “more pixel space information” vs “more semantic information” inside a representation, it’s useful to think of this as a weighted window on the spectrum of pixels to semantics, with higher absolute weighting on the spectrum meaning that the signals associated with that abstraction level are less dispersed/more easily recoverable from the representation (e.g., via a linear probe).
 
-**Through this writing, for rhetorical purposes, I often discretize this weighted window idea and refer to a single instance of an uneven weighted window as “a (single) level of abstraction”, even though it’s not entirely accurate. At any given "high-level" representation, we often retain some lower level abstractions.**
+Through this writing, for rhetorical purposes, I often discretize this weighted window idea and refer to a single instance of an uneven weighted window as “a (single) level of abstraction”, even though it’s not entirely accurate. At any given "high-level" representation, we often retain some lower level abstractions.
 
 Pixels are not (to a good extent) linearly recoverable from SSL latents trained with I-JEPA or DINO[^2], but the RAE paper[^8] shows that pixels are recoverable from SSL latents with enough effort (not linearly). This would be consistent with pixel-space information being dispersed in SSL latents. It likely also follows that intermediate abstractions are dispersed in SSL latents too, with the higher levels just being less dispersed. Using our weighted window analogy, current SSL representations have lower level abstractions less weighted, but still represent the entire hierarchy.
 
@@ -400,12 +402,12 @@ So, an interpretation of a factor behind the existing success of latent SSL may 
 
 It’s just that these lower level abstractions are worse and more dispersed, as their construction isn’t supervised, and we don’t provide some explicit target for them (and we can’t because they’re too dispersed).
 
-Under **constructive** SSL, we learn better lower level compositions by supervising construction, and thus learn better lower level abstractions. This allows us to more explicitly specify a prediction objective over the entire abstraction hierarchy.
+Under constructive SSL, we learn better lower level compositions by supervising construction, and thus learn better lower level abstractions. This allows us to more explicitly specify a prediction objective over the entire abstraction hierarchy.
 
 
 ## Some closing thoughts (on JEPAs)
 
-**Constructive** SSL is a position about doing SSL. With current deep learning architectures, it will often use deep supervision; but I do not want to limit your imagination to doing deep supervision on existing architectures. The main intent of this blog post is an attempt at distilling the core ideas of what I think works for learning abstractions, not some more specific algorithm or implementation.
+Constructive SSL is a position about doing SSL. With current deep learning architectures, it will often use deep supervision; but I do not want to limit your imagination to doing deep supervision on existing architectures. The main intent of this blog post is an attempt at distilling the core ideas of what I think works for learning abstractions, not some more specific algorithm or implementation.
 
 The choice of converting I-JEPA into cI-JEPA comes from the intuition that predicting representations directly provides the most “raw” signal for a given level of abstraction, and how they differ from other levels of abstraction. Further, working off of a well-known existing design makes the idea significantly more communicable, as well as provides a good baseline, to/for people.
 
