@@ -279,9 +279,10 @@ One training step can be written as:
 
 ### Evaluation methodology
 
-I evaluate learned representations with a linear-probing protocol closely matching the one used in I-JEPA, but adapted to ImageNet-100 and optimized with AdamW rather than LARS. After pretraining, I freeze the encoder and train a single linear classifier on top of the final-layer representation. Since the encoder has no CLS token, I extract the final patch tokens, average-pool them across spatial locations, and feed the pooled feature into a linear layer producing 100-way logits. When using EMA pretraining, I probe the EMA teacher encoder rather than the online student. I report top-1 accuracy on the ImageNet-100 validation set.
+<!-- I evaluate learned representations with a linear-probing protocol closely matching the one used in I-JEPA, but adapted to ImageNet-100 and optimized with AdamW rather than LARS. After pretraining, I freeze the encoder and train a single linear classifier on top of the final-layer representation. Since the encoder has no CLS token, I extract the final patch tokens, average-pool them across spatial locations, and feed the pooled feature into a linear layer producing 100-way logits. When using EMA pretraining, I probe the EMA teacher encoder rather than the online student. I report top-1 accuracy on the ImageNet-100 validation set. -->
+I evaluate frozen EMA teacher representations with a standard linear probe on mean-pooled final-layer patch tokens and report ImageNet-100 top-1 accuracy. Unlike the larger-budget linear probe used in the original I-JEPA work, I use a much smaller probe budget. The probe classifier is trained for only 10 epochs with batch size 256 using AdamW. The exact probe hyperparameters are listed below. 
 
-The data transforms follow the standard I-JEPA-style linear-evaluation recipe. However, unlike the larger-budget linear probe used in the original I-JEPA work, I use a much smaller probe budget. The probe classifier is trained for only 10 epochs with batch size 256 using AdamW. 
+The data transforms follow the standard I-JEPA-style linear-evaluation recipe. 
 
 ### Exact probe hyperparameters
 
@@ -325,17 +326,24 @@ As a reminder:
 3. Further, remember that in the actual code, `all_to_last_weight` and `last_to_last_weight` don't exactly correspond to <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span>. In the code, if `last_to_last_weight` isn't set, <span>&#92;(&#92;beta&#92;)</span> will default to <span>&#92;(&#92;alpha&#92;)</span>. 
 
 **The important observations:**
-1. Run `R-A05-B10` which performs deep supervision, while the final representation is shaped by predicting **only** the target's final representation, still outperforms the vanilla baselines `L200` and `L300`. This shows that shaping intermediate representations by predicting a target abstraction hierarchy learns good intermediate abstractions, which leads to a better final representation.
+<!-- 1. Run `R-A05-B10` which performs deep supervision, while the final representation is shaped by predicting **only** the target's final representation, still outperforms the vanilla baselines `L200` and `L300`. This shows that shaping intermediate representations by predicting a target abstraction hierarchy learns good intermediate abstractions, which leads to a better final representation. -->
+1. `R-A05-B10` beats both I-JEPA baselines, which suggests that hierarchy prediction is already useful as deep supervision even when the final representation predicts only the deepest target.
 
-2. Run `R-A05-B08` which shapes the final representation by using it to predict lower level abstractions beats `R-A05-B10` which does deep supervision but does not use the final representation to predict lower level representations. This shows that shaping the final representation by predicting lower level abstractions can boost its semantic performance.
+<!-- 2. Run `R-A05-B08` which shapes the final representation by using it to predict lower level abstractions beats `R-A05-B10` which does deep supervision but does not use the final representation to predict lower level representations. This shows that shaping the final representation by predicting lower level abstractions can boost its semantic performance. -->
+2. `R-A05-B08` beats `R-A05-B10`, which suggests that asking the final representation to predict lower-level abstractions improves the final representation itself.
 
-3. Comparing runs `R-U`, `R-A05-B05`, `R-A08-B08`, and `R-A05-B08`: There is a balance to be made by tuning <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span> to bias the representations to compose to higher level abstractions and retaining lower level abstractions that are more predictive of lower levels of the hierarchy. Dispersing too much (`R-A08-B08`) starts hurting. Not composing higher/dispersing too little (`R-U`) doesn't learn enough semantics. 
+<!-- 3. Comparing runs `R-U`, `R-A05-B05`, `R-A08-B08`, and `R-A05-B08`: There is a balance to be made by tuning <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span> to bias the representations to compose to higher level abstractions and retaining lower level abstractions that are more predictive of lower levels of the hierarchy. Dispersing too much (`R-A08-B08`) starts hurting. Not composing higher/dispersing too little (`R-U`) doesn't learn enough semantics. 
 
-    We don't want to disperse too much in the middle of the network so we can retain more factors potentially useful for further semantic composition, while we want to disperse more and compose more in the final block so that we can compose the more higher level abstractions (`R-A05-B08` is better than `R-A05-B05`). 
+    We don't want to disperse too much in the middle of the network so we can retain more factors potentially useful for further semantic composition, while we want to disperse more and compose more in the final block so that we can compose the more higher level abstractions (`R-A05-B08` is better than `R-A05-B05`).  -->
 
-4. `R-B05` and `R-B08`: even without biasing the deep supervision towards a higher level, biasing the final representation towards higher levels improves semantics. 
+3. Weighting matters. Uniform supervision (`R-U`) under-composes, while overly strong deepest-target bias (`R-A08-B08`) hurts performance. The best result (`R-A05-B08`) uses moderate deepest-target bias in intermediate layers and stronger bias in the final layer.
 
-5. `R-A.-B05` and `R-A.-B08`: without deep supervision predicting the hierarchy with the final representation produces noisy targets. Conversely, deep supervision produces a good abstraction hierarchy that is effective for defining a prediction objective on. 
+<!-- 4. `R-B05` and `R-B08`: even without biasing the deep supervision towards a higher level, biasing the final representation towards higher levels improves semantics.  -->
+
+4. `R-B05` and `R-B08` show that final-layer bias alone helps, but `R-A.-B05` and `R-A.-B08` show that final-layer hierarchy prediction without deep supervision is weak. The hierarchy becomes most useful when intermediate representations are also shaped.
+
+<!-- 
+5. `R-A.-B05` and `R-A.-B08`: without deep supervision predicting the hierarchy with the final representation produces noisy targets. Conversely, deep supervision produces a good abstraction hierarchy that is effective for defining a prediction objective on.  -->
 
 6. As a sanity check, I also added the first block's output (<span>&#92;(d_0&#92;)</span>) for run `R-A05-B08-12`. There's a slight performance dip likely because predicting the first representation does not provide much learning signal. 
 
@@ -350,7 +358,7 @@ I think it’s also important to consider the possibility that current latent SS
 
 When people talk about “more pixel space information” vs “more semantic information” inside a representation, it’s useful to think of this as a weighted window on the spectrum of pixels to semantics, with higher absolute weighting on the spectrum meaning that the signals associated with that abstraction level are less dispersed/more easily recoverable from the representation (e.g., via a linear probe).
 
-Through this writing, for rhetorical purposes, I often discretize this weighted window idea and refer to a single instance of an uneven weighted window as “a (single) level of abstraction”, even though it’s not entirely accurate. At any given "high-level" representation, we often retain some lower level abstractions.
+Through this writing, I often discretize this weighted window idea and refer to a single instance of an uneven weighted window as “a (single) level of abstraction”, even though it’s not entirely accurate. At any given "high-level" representation, we often retain some lower level abstractions.
 
 Pixels are not (to a good extent) linearly recoverable from SSL latents trained with I-JEPA or DINO[^2], but the RAE paper[^8] shows that pixels are recoverable from SSL latents with enough effort (not linearly). This would be consistent with pixel-space information being dispersed in SSL latents. It likely also follows that intermediate abstractions are dispersed in SSL latents too, with the higher levels just being less dispersed. Using our weighted window analogy, current SSL representations have lower level abstractions less weighted, but still represent the entire hierarchy.
 
@@ -371,13 +379,11 @@ The choice of converting I-JEPA into cI-JEPA comes from the intuition that predi
 
 Other choices like choosing instead to predict some distribution over prototypes like DINO may work, but they obscure the signal of the raw representation latents: DINO supervises a normalized prototype-assignment distribution (softmax outputs), which obscures information from the raw representation latents.
 
-Though I’m not entirely sure of the current direction of regularization-driven methods for JEPAs like LeJEPA, probably in part because I don’t understand them perfectly, the core intuition of using JEPAs to lift the level of abstraction we supervise at is very powerful. Here, we just lift to many differing levels of abstraction.
-
 I also wouldn’t limit your imagination to doing just JEPAs. The important intuition that I’m trying to convey to you is simply that you should supervise the semantic construction of abstractions explicitly and learn by predicting varying levels of abstraction, and not just rely on an internal barely-constrained representation search while explicitly learning over a single level of abstraction (this applies to both methods like the MAE[^3] or I-JEPA).
 
 Another intention of this design is to scale vision models. Scalable methods for intelligence have some notion of “more computing power can build/discover more abstractions from data”. Traditional latent SSL having a dispersion bias almost feels anti-scalable to me, as it throws away building blocks and potentially useful learning signals.
 
-V-JEPA 2.1[^4] has a deep supervision setup that’s closest to cI-JEPA from what I am aware of. They fix the layers they’re supervising, as well as fuse the different intermediate representations by the channel for prediction, and predict many levels with a fused representation. I do think that the authors under-emphasised the interestingness of doing deep supervision. At the risk of having a bit too much hubris, I think ideas I’ve presented are the factors that underlie why the V-JEPA 2.1 deep supervision works too.
+V-JEPA 2.1[^4] has a deep supervision setup that’s closest to cI-JEPA from what I am aware of. They fix the layers they’re supervising, as well as fuse the different intermediate representations by the channel for prediction, and predict many levels with a fused representation. I do think that the authors under-emphasised the interestingness of doing deep supervision. I think ideas I’ve presented are the factors that underlie why the V-JEPA 2.1 deep supervision works too.
 
 I thought about calling my cI-JEPA design I-JEPA 1.1 because I think it’s a much more fitting name, but I did not want to impose a version number onto the original authors.
 
@@ -398,6 +404,8 @@ Saining and Philip helped prompt some of these ideas.
 Another initial inspiration of this project started out involving EBMs along with some guidance from Yilun[^7]. I had (and have) a minor obsession with composing abstractions (with EBMs) which I couldn’t get working with existing methods, which led to this.
 
 James, Samson, and Cem helped me pick out the naming scheme.
+
+Cem and Leo (not his real name?) also read over this and suggested that I compact the text more. The version you see now is post-compaction.  
 
 ## References
 
