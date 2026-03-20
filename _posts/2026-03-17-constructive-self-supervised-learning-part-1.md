@@ -205,7 +205,7 @@ For example, when we have <span>&#92;(&#92;alpha=0.5&#92;)</span> and <span>&#92
 - every **non-final** source row places <span>&#92;(50&#92;%&#92;)</span> of its weight on the deepest teacher target and <span>&#92;(5&#92;%&#92;)</span> on each of the other <span>&#92;(10&#92;)</span> depths;
 - the **final** source row places <span>&#92;(80&#92;%&#92;)</span> of its weight on the deepest teacher target and <span>&#92;(2&#92;%&#92;)</span> on each of the other <span>&#92;(10&#92;)</span> depths.
 
-Intuitively, this makes the deepest EMA representation the anchor of the objective. This deepest representation corresponds to the highest level of abstraction, and so by increasing <span>&#92;(&#92;alpha, &#92;beta&#92;)</span>, you can bias the representations at a given source row towards higher level composition while still being grounded by the entire abstraction heirachy. 
+Intuitively, this makes the deepest EMA representation the anchor of the objective. This deepest representation corresponds to the highest level of abstraction, and so by increasing <span>&#92;(&#92;alpha, &#92;beta&#92;)</span>, you can bias the representations at a given source row towards higher level composition while still being grounded by the entire abstraction hierarchy by the residual loss. 
 
 As an implementation note, in the code, `all_to_last_weight` biases every source depth (including the last source depth) toward the last target depth, while `last_to_last_weight` only biases the last source depth toward the last target and leaves non-last source depths uniform. In the code, if `last_to_last_weight`is set, it will overwrite `all_to_last_weight` in the code.
 
@@ -320,10 +320,7 @@ The data transforms follow the standard I-JEPA-style linear-evaluation recipe.
 | `R-A.-B08` | cI-JEPA, no deep supervision + higher final bias <span>&#92;((&#92;mathcal D = &#92;{d_1, &#92;dots, d_{11}&#92;})&#92;)</span> | 200 | N/A | 0.8 | 66.02 % |
 
 
-As a reminder:
-1. A higher <span>&#92;(&#92;alpha&#92;)</span> means that non-last depth sources will weigh their prediction of the last depth target higher. 
-2. A higher <span>&#92;(&#92;beta&#92;)</span> means that ONLY the last depth will weigh its prediction of the last depth target higher. 
-3. Further, remember that in the actual code, `all_to_last_weight` and `last_to_last_weight` don't exactly correspond to <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span>. In the code, if `last_to_last_weight` isn't set, <span>&#92;(&#92;beta&#92;)</span> will default to <span>&#92;(&#92;alpha&#92;)</span>. 
+Note that in the actual code, `all_to_last_weight` and `last_to_last_weight` don't exactly correspond to <span>&#92;(&#92;alpha&#92;)</span> and <span>&#92;(&#92;beta&#92;)</span>. In the code, if `last_to_last_weight` isn't set, <span>&#92;(&#92;beta&#92;)</span> will default to <span>&#92;(&#92;alpha&#92;)</span>. 
 
 **The important observations:**
 1. `R-A05-B10` beats both I-JEPA baselines, which suggests that hierarchy prediction is already useful as deep supervision even when the final representation predicts only the deepest target.
