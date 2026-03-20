@@ -76,7 +76,7 @@ three.
 A standard supervised deep loss, such as attaching a classifier to an intermediate layer, is poorly matched to this goal. It rewards whatever features solve the task immediately, including shortcuts, rather than abstractions that remain useful for later composition. That makes it a weak objective for shaping intermediate representations, especially on noisy natural data.
 
 So for a given hidden representation, the deep objective should do two things: control the retention-dispersion tradeoff, and still
-bias learning toward higher-level composition.
+bias learning toward higher-level composition. If there was sufficient communication bandwidth between the levels of abstraction (there isn't in existing architectures), we may be able to retain easy access to all the building blocks, and the purpose of deep supervision becomes largely to bias towards non-spurious higher-level composition.
 
 
 ### Predicting an abstraction hierarchy is a good deep objective, as well as a good objective generally. 
