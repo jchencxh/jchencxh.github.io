@@ -71,7 +71,9 @@ Latent SSL reduces this gap by predicting bootstrapped representations that are 
 ### Why mainstream SSL converged on dispersion, and why that is limiting
 
 
-Mainstream latent SSL converged on dispersion largely because it lacks a direct way to encourage higher-level composition while still preserving useful lower-level detail. Dispersion is an effective shortcut: it suppresses low-level factors that are hard to compose and makes higher-level signals easier to learn. But it is also blunt. Some of the lower-level structure it throws away would still be useful for later composition or for the final representation. Constructive SSL is meant to replace that blunt tradeoff with explicit control over what gets retained, composed, and dispersed.
+Mainstream latent SSL converged on dispersion largely because it lacks a direct way to encourage higher-level composition while still preserving useful lower-level detail. Dispersion is a shortcut: it suppresses low-level factors that are hard to compose and makes higher-level signals easier to learn. But it is also blunt. Some of the lower-level structure it throws away would still be useful for later composition or for the final representation, and it may not learn semantic compositions useful for more robust higher level abstractions. 
+
+Constructive SSL is meant to replace that blunt tradeoff with explicit control over what gets retained, composed, and dispersed, while trying to learn more (lower level) semantic compositions for more robust higher level abstractions. 
 
 
 ## The Actual cI-JEPA Algorithm
