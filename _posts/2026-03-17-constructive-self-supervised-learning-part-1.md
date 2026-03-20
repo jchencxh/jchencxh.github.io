@@ -17,7 +17,7 @@ Traditionally, predicting lower-level abstractions is treated as harmful to lear
 
 I call this family of objectives **constructive** SSL, because it explicitly supervises semantic construction. As a concrete example, I introduce cI-JEPA, a deeply supervised variant of I-JEPA[^1] in which a small set of student depths predicts a hierarchy of teacher representations rather than a single final target. By changing how this hierarchy is weighted, we can control the tradeoff between retaining lower-level structure and composing toward higher-level abstractions.
 
-On ImageNet-100 at ViT-B scale, this improves linear-probe accuracy over the I-JEPA baseline. More broadly, I will argue two things: first, predicting an abstraction hierarchy is a useful way to design deep self-supervision for intermediate representations; second, using that same hierarchy to shape the final representation improves the final representation as well.
+On ImageNet-100 at ViT-B scale, this improves linear-probe accuracy over the I-JEPA baseline. More broadly, I will show two things: first, predicting an abstraction hierarchy is a useful way to design deep self-supervision for intermediate representations; second, using that same hierarchy to shape the final representation improves the final representation as well.
 
 I perform my experiments on ImageNet-100 and ViT-B scale, and evaluate via improvement in linear probing accuracy on ImageNet-100.
 
@@ -79,15 +79,15 @@ Mainstream latent SSL converged on dispersion largely because it lacks a direct 
 ![cI-JEPA algorithm diagram](/images/posts/constructive-self-supervised-learning-part-1/ci-jepa-diagram.jpg)
 *cI-JEPA algorithm visual, based off of Figure 3 from I-JEPA paper[^1].*
 
-I train a standard ViT-B/16. 
+<!-- I train a standard ViT-B/16. 
 
 The core change from I-JEPA to cI-JEPA is actually very small: instead of using a single source depth to predict a single teacher representation, cI-JEPA samples a small set of source depths extracted from all the depths collected from the student vision encoder (i.e., we take early exits after every block), and asks each depth from the small source set to predict all the collected depths from the EMA teacher. 
 
-Everything not mentioned here follows I-JEPA. In particular, I keep the same context/target-block masking scheme, the same target-location-conditioned predictor setup, and the same EMA teacher--student asymmetry. This section only describes the representation-level cI-JEPA objective
+Everything not mentioned here follows I-JEPA. In particular, I keep the same context/target-block masking scheme, the same target-location-conditioned predictor setup, and the same EMA teacher--student asymmetry. This section only describes the representation-level cI-JEPA objective -->
 
-In the scaled-down setting used here, I train on ImageNet-100 (about a tenth of ImageNet-1000 size) for 200 epochs by default, and always use a LR warmup covering roughly <span>&#92;(2.5&#92;%&#92;)</span> of total training steps. 
+I train a standard ViT-B/16. Relative to I-JEPA, the only substantive change is the objective: at each step, a small set of student depths predicts all collected teacher depths. Masking, target-location-conditioned prediction, and the EMA teacher follow I-JEPA.
 
-Note that my setup also removes the final encoder LayerNorm (this has little effect on the baseline accuracy and is mostly done because there are no deep LayerNorms), uses constant weight decay <span>&#92;(0.05 &#92;)</span>, as well as use RoPE instead of sincos positional embeddings (as more recent JEPAs use RoPE). The goal is to keep the optimization and masking recipe as close as possible to I-JEPA while changing only the supervision objective to minimize confounds. 
+In the scaled-down setting used here, I train on ImageNet-100 (about a tenth of ImageNet-1000 size) for 200 epochs by default, and always use a LR warmup covering roughly <span>&#92;(2.5&#92;%&#92;)</span> of total training steps. cI-JEPA setup also removes the final encoder LayerNorm (done for consistency because there are no deep LayerNorms), uses constant weight decay <span>&#92;(0.05 &#92;)</span>, as well as use RoPE instead of sincos positional embeddings (as more recent JEPAs use RoPE). The goal is to keep the optimization and masking recipe as close as possible to I-JEPA while changing only the supervision objective to minimize confounds. 
 
 ### Collected depths and teacher targets
 
