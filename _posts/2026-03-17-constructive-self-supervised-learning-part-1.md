@@ -42,7 +42,7 @@ abstractions. Too little composition leaves the final representation under-abstr
 three.
 </div>
 
-A standard supervised deep loss, such as attaching a classifier to an intermediate layer, is poorly matched to this goal. It rewards whatever features solve the task immediately, including shortcuts, rather than abstractions that remain useful for later composition. That makes it a weak objective for shaping intermediate representations, especially on noisy natural data.
+A standard supervised deep loss, such as attaching a classifier to an intermediate layer[^9], is poorly matched to this goal. It rewards whatever features solve the task immediately, including shortcuts, rather than abstractions that remain useful for later composition. That makes it a weak objective for shaping intermediate representations, especially on noisy natural data.
 
 So for a given hidden representation, the deep objective should do two things: control the retention-dispersion tradeoff, and still
 bias learning toward higher-level composition. If there was sufficient communication bandwidth between the levels of abstraction (there isn't in existing architectures), we wouldn't have to keep all our building blocks in a single set of latents, and the purpose of deep supervision becomes largely to bias towards non-spurious higher-level composition.
@@ -405,3 +405,4 @@ Cem and Leo (not his real name?) also read over this and suggested that I compac
 [^6]: A. Kumar, J. Clune, J. Lehman, K. O. Stanley, "Questioning Representational Optimism in Deep Learning: The Fractured Entangled Representation Hypothesis," arXiv:2505.11581, 2025. [arXiv:2505.11581](https://arxiv.org/abs/2505.11581)
 [^7]: Y. Du, S. Li, I. Mordatch, "Compositional Visual Generation and Inference with Energy Based Models," arXiv:2004.06030, 2020. [arXiv:2004.06030](https://arxiv.org/abs/2004.06030)
 [^8]: B. Zheng, N. Ma, S. Tong, S. Xie, "Diffusion Transformers with Representation Autoencoders," arXiv:2510.11690, 2025. [arXiv:2510.11690](https://arxiv.org/abs/2510.11690)
+[^9]: C.-Y. Lee, S. Xie, P. Gallagher, Z. Zhang, Z. Tu, "Deeply-Supervised Nets," arXiv:1409.5185, 2014. [arXiv:1409.5185](https://arxiv.org/abs/1409.5185)
