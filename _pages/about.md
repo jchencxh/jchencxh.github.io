@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Do you not see how beautiful the world could be?"
+title: ""
 author_profile: true
 hide_author_avatar: true
 redirect_from: 
