@@ -54,3 +54,6 @@ Suppressing the accessible information has two main problems:
 **It is hard to create a scalable objective that ignores any of our three main factors.**
 
 The search for a vision scaling law probably requires an objective that improves objective signal-to-noise without permanently suppressing accessible information. I'm unsure if purely latent methods can ever provide this. 
+
+## Footnotes
+When I've say "information", be sure to understand I'm referring more to some notion of information **accessible** to your model, objective, and compute bounds. To illustrate, if 99% of your loss is weight decay, then very little information is likely to be accessible. 
