@@ -26,7 +26,7 @@ Quantity of information:
 * There should also be enough information in the objective for that objective signal-to-noise ratio to be useful at scale. 
 
 Quality of information: 
-* This information should be semantically broad/rich enough that the model has to learn abstractions rather than fragmented features. E.g., features only useful for classifying some set of animals aren't great abstractions, and so narrow supervised training (e.g., ImageNet classification) doesn't produce great abstractions. 
+* This information should be semantically broad/rich enough that the model has to learn cohesive abstractions (that can generalize) rather than fragmented features. E.g., features only useful for classifying some set of animals aren't great abstractions, and so narrow supervised training (e.g., ImageNet classification) doesn't produce great abstractions. 
 
 ## Objective signal-to-noise is not data signal-to-noise
 
