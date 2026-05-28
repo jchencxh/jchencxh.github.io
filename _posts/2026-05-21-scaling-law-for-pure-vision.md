@@ -11,6 +11,11 @@ categories:
 * Auto generated table of contents
 {:toc}
 
+## What I Mean by Isn't Scaling
+
+It was pointed out to me that this claim could be taken literally. It shouldn't be. If you make the model bigger, some benchmark numbers will get better. Rather, it's better read as "why do we not have an objective that when we scale, sufficiently solves all of our demands for vision"?
+
+
 ## The Drivers of a Scalable Objective
 
 For the purpose of this blog, scaling is:
@@ -56,4 +61,4 @@ Suppressing the accessible information has two main problems:
 The search for a vision scaling law probably requires an objective that improves objective signal-to-noise without permanently suppressing accessible information. I'm unsure if purely latent methods can ever provide this. 
 
 ## Footnotes
-When I've say "information", be sure to understand I'm referring more to some notion of information **accessible** to your model, objective, and compute bounds. To illustrate, if 99% of your loss is weight decay, then very little information is likely to be accessible. 
+When I've say "information", be sure to understand I'm referring more to some notion of information **accessible** to your model, objective, and compute bounds. 
