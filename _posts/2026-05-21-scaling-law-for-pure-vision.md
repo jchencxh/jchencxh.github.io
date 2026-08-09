@@ -43,19 +43,19 @@ Why do we want both this height (builds up) and width (filled at each level) as 
 * A lack of good lower level abstractions, other than being bad for tasks that need them, inhibits learning robust higher level semantics. Intuitively, composing together better lower level abstractions gives better higher level semantics. 
 
 Mirroring this, scalability seems to break down when we are missing one of these factors:
-* Case 1: Scaling could learn better lower level abstractions, but doesn't sufficiently bias towards composition that builds the hierarchy up towards higher level semantics. 
+* Case 1: Scaling doesn't sufficiently bias towards composition that builds the hierarchy up towards higher level semantics. 
 
 <div class="case-diagram">
   <img src="/images/posts/scaling-law-for-pure-vision/weak-top.png" alt="Weak top of the abstraction hierarchy">
 </div>
 
-* Case 2: Scaling doesn't learn more/better lower level abstractions, which inhibits the quality and quantity of higher level semantics you can learn. 
+* Case 2: Scaling doesn't sufficiently bias towards better lower level abstractions. 
 
 <div class="case-diagram">
   <img src="/images/posts/scaling-law-for-pure-vision/weak-bottom.png" alt="Weak bottom of the abstraction hierarchy">
 </div>
 
-## Why does next token prediction (NTP) scale well? 
+## Next token prediction (NTP) fills the hierarchy. 
 
 1. **NTP builds up:** Predicting a high SNR + higher semantic target is a bias towards learning higher level semantics. The signal-to-noise of text is high so predicting text is a high SNR target, and we can pick the text so it contains higher level semantics. 
 
@@ -72,11 +72,11 @@ Mirroring this, scalability seems to break down when we are missing one of these
 
 NTP avoids both failure cases, and does indeed scale well. 
 
-## Why does vision not scale well? 
+## SSL doesn't currently fill the hierarchy. 
 
 Visual learning currently has two camps, one which predicts the data as the target, and one which bootstraps a latent target. Neither camp has good enough scaling behavior that we find in LLMs. More precisely, naively scaling SSL currently produces less clean and less predictable gains than scaling language models. More ambitiously, why is it that with existing methods and compute, can we not learn mathematics like language models do, just from visual data? To concretise our discussion, we'll consider the MAE and DINO. 
 
-**The MAE objective biases towards a <span class="case-term" tabindex="0" data-tooltip="Case 1: Scaling could learn better lower level abstractions, but doesn't sufficiently bias towards composition that builds the hierarchy up towards higher level semantics.">Case 1 failure</span>:**
+**The MAE objective biases towards a <span class="case-term" tabindex="0" data-tooltip="Case 1: Scaling doesn't sufficiently bias towards composition that builds the hierarchy up towards higher level semantics. ">Case 1 failure</span>:**
 
 <div class="case-diagram">
   <img src="/images/posts/scaling-law-for-pure-vision/weak-top.png" alt="Weak top of the abstraction hierarchy">
@@ -86,7 +86,7 @@ The MAE predicts masked out pixels with patch representations, which isn't a goo
 
 Empirically, we can observe that the MAE performs worse on global tasks vs DINO[^1].
 
-**The DINO objective biases towards a <span class="case-term" tabindex="0" data-tooltip="Case 2: Scaling doesn't learn more/better lower level abstractions, which inhibits the quality and quantity of higher level semantics you can learn.">Case 2 failure</span>:** 
+**The DINO objective biases towards a <span class="case-term" tabindex="0" data-tooltip="Case 2: Scaling doesn't sufficiently bias towards better lower level abstractions. ">Case 2 failure</span>:** 
 
 <div class="case-diagram">
   <img src="/images/posts/scaling-law-for-pure-vision/weak-bottom.png" alt="Weak bottom of the abstraction hierarchy">
