@@ -1,6 +1,6 @@
 ---
 title: "Are all scalable objectives alike? "
-date: 2026-08-6 09:00:00 -0400
+date: 2026-08-8 09:00:00 -0400
 permalink: /blog/filling-the-hierarchy-part-1/
 categories:
   - blog
