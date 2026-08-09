@@ -101,7 +101,7 @@ The drivers for this failure case are more intricate than the MAE. DINO pools im
 
   This interface was not designed for utilising signals helpful for learning lower level abstractions, as the CLS interface makes credit assignment hard. 
 
-Empirically, prolonged training of DINO starts hurting performance on dense tasks[^2]. The DINO objective is biased against lower level abstractions (at least in the final abstraction). 
+Empirically, prolonged training of DINO starts hurting performance on dense tasks[^2]. The DINO objective is biased against lower level abstractions (at least in the final representation). 
 
 DINO Caveats:
   Global tasks still improve with more training[^2]. This does not contradict with my claim of Case 2 failures. It'll be hard to learn the high level semantics that require preserved lower level abstractions. 
@@ -112,10 +112,11 @@ DINO Caveats:
 
 Thank you to (James) Wu Changyang for the graphics, Manu Gaur and Leo (maybe not his real name) for feedback on the first version of this post, and Akarsh Kumar for a conversation which motivated for more precision in some arguments. 
 
-This post is also a love letter to the platonic representation hypothesis, which refers to the same Anna Karenina quote. 
+This post is also a love letter to the Platonic Representation Hypothesis[^3], which refers to the same Anna Karenina quote. 
 
 
 ## References
 
 [^1]: J. Zhu, J. Qi, M. Ding, et al., "Understanding Self-Supervised Pretraining with Part-Aware Representation Learning," arXiv:2301.11915, 2023. [arXiv:2301.11915](https://arxiv.org/abs/2301.11915)
 [^2]: O. Siméoni, H. V. Vo, M. Seitzer, et al., "DINOv3," arXiv:2508.10104, 2025. [arXiv:2508.10104](https://arxiv.org/abs/2508.10104)
+[^3]: M. Huh, B. Cheung, T. Wang, P. Isola, "The Platonic Representation Hypothesis," arXiv:2405.07987, 2024. [arXiv:2405.07987](https://arxiv.org/abs/2405.07987)
