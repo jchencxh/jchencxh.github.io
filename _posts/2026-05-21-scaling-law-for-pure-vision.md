@@ -112,7 +112,7 @@ DINO Caveats:
 
 Thank you to (James) Wu Changyang for the graphics, Manu Gaur and Leo (maybe not his real name) for feedback on the first version of this post, and Akarsh Kumar for a conversation which motivated for more precision in some arguments. 
 
-This post is in some sense a love letter to the platonic representation hypothesis, which also refers to the same Anna Karenina quote. 
+This post is also a love letter to the platonic representation hypothesis, which refers to the same Anna Karenina quote. 
 
 
 ## References
