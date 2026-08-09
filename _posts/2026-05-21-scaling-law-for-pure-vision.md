@@ -101,7 +101,7 @@ The drivers for this failure case are more intricate than the MAE. DINO pools im
 
   This interface was not designed for utilising signals helpful for learning lower level abstractions, as the CLS interface makes credit assignment hard. 
 
-Empirically, prolonged training of DINO starts hurting performance on dense tasks[^2]. The DINO objective is biased against lower level abstractions (at least in the final representation). 
+Empirically, prolonged training of DINO starts hurting performance on dense tasks[^2]. The DINO objective is biased against lower level abstractions (at least in the final representation). Even though bigger DINO models (without prolonged training) do improve on dense tasks, this does not mean that the DINO objective is an effective bias for learning good lower level abstractions. You want the improvement in lower level abstractions to be a permanent part of the objective, and not just for its purpose as temporary scaffolding for some higher level semantics. 
 
 DINO Caveats:
   Global tasks still improve with more training[^2]. This does not contradict with my claim of Case 2 failures. It'll be hard to learn the high level semantics that require preserved lower level abstractions. 
